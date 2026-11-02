@@ -3,9 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       tasks:
-        description: 'Task names separated by commas, or ALL for every task on DEV'
+        description: 'Task names separated by commas (or ALL for every task on DEV, which also picks up DEV-only tasks)'
         required: true
-        default: 'ALL'
 
 jobs:
   export:
