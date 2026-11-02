@@ -13,6 +13,14 @@ on:
         description: 'Only list the files that would be imported'
         type: boolean
         default: false
+      only:
+        description: 'Import only these task names, comma-separated (empty = every changed task). A partial run does not move the promoted-prod tag.'
+        required: false
+        default: ''
+      allow_new:
+        description: 'Allow tasks that are not in PROD yet (they will be CREATED in PROD)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -32,6 +40,8 @@ jobs:
         shell: bash
         env:
           BASE_INPUT: ${{ inputs.base }}
+          ALLOW_NEW: ${{ inputs.allow_new }}
+          ONLY: ${{ inputs.only }}
         run: |
           set -euo pipefail
           BASE="$BASE_INPUT"
@@ -47,6 +57,37 @@ jobs:
           echo "Comparing $BASE with $GITHUB_SHA"
           FILES=$(git diff --name-only --diff-filter=AM "$BASE" "$GITHUB_SHA" -- 'tasks/*.json')
           DELETED=$(git diff --name-only --diff-filter=D "$BASE" "$GITHUB_SHA" -- 'tasks/*.json')
+          ADDED=$(git diff --name-only --diff-filter=A "$BASE" "$GITHUB_SHA" -- 'tasks/*.json')
+          if [ -n "${ONLY//[[:space:]]/}" ]; then
+            WANT=$(printf '%s\n' "$ONLY" | tr ',' '\n' | tr -d '\r' \
+              | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | grep -v '^$' \
+              | sed 's#^#tasks/#;s#$#.json#' || true)
+            PICKED=""
+            while IFS= read -r w; do
+              [ -n "$w" ] || continue
+              if printf '%s\n' "$FILES" | grep -Fxq "$w"; then
+                PICKED="${PICKED}${w}"$'\n'
+              else
+                echo "$w is not a changed task file since $BASE. Check the name and that it is merged to main." >&2
+                echo "### Stopped: $w is not a changed task file since $BASE" >> "$GITHUB_STEP_SUMMARY"
+                exit 1
+              fi
+            done <<< "$WANT"
+            FILES="${PICKED%$'\n'}"
+            ADDED=$(printf '%s\n' "$ADDED" | grep -Fx -f <(printf '%s\n' "$FILES") || true)
+            echo "Partial run: importing only the tasks listed in 'only'."
+          fi
+          if [ -n "$ADDED" ] && [ "$ALLOW_NEW" != "true" ]; then
+            {
+              echo "### Stopped: these task files are new since $BASE, so they would be CREATED in PROD"
+              echo "$ADDED" | sed 's/^/- /'
+              echo ""
+              echo "If that is intended, run again with allow_new ticked. Otherwise remove the files from tasks/ on main."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "New task files found; stopping. Tick allow_new if they should be created in PROD." >&2
+            echo "$ADDED" >&2
+            exit 1
+          fi
           {
             echo "### Task files to import into PROD"
             if [ -n "$FILES" ]; then echo "$FILES" | sed 's/^/- /'; else echo "None"; fi
@@ -81,6 +122,7 @@ jobs:
           CHANGED_FILES: ${{ needs.changes.outputs.files }}
         run: ./scripts/qem_import.sh
       - name: Mark this commit as promoted
+        if: inputs.only == ''   # a partial run leaves the other changes pending
         shell: bash
         run: |
           set -euo pipefail
