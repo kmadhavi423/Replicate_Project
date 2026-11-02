@@ -21,4 +21,6 @@ jobs:
           qem_login
           echo "QEM login OK"
           curl -sS -f --header "EnterpriseManager.APISessionID: ${SESSION}" \
-            "${BASE}/servers/${QEM_SERVER}/tasks" | jq -r '.taskList[].name' | head -20
+            "${BASE}/servers/${QEM_SERVER}/tasks" > .tasklist.tmp
+          jqx -r '.taskList[].name' .tasklist.tmp | head -20
+          rm -f .tasklist.tmp

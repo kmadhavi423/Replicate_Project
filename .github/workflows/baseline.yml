@@ -1,0 +1,51 @@
+name: Baseline from PROD
+on: workflow_dispatch
+
+jobs:
+  export-prod:
+    runs-on: [self-hosted, windows]
+    environment: prod
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Export all PROD tasks without endpoints
+        shell: bash
+        env:
+          QEM_HOST: ${{ vars.QEM_HOST }}
+          QEM_SERVER: ${{ vars.REPLICATE_SERVER }}
+          QEM_PAT: ${{ secrets.QEM_PAT }}
+          QEM_USER: ${{ secrets.QEM_USER }}
+          QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
+        run: ./scripts/qem_baseline.sh export
+      - name: Commit baseline
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "replicate-bot"
+          git config user.email "replicate-bot@users.noreply.github.com"
+          git add tasks
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git commit -m "Baseline: PROD tasks [skip ci]"
+          git push origin HEAD:main
+
+  import-dev:
+    needs: export-prod
+    runs-on: [self-hosted, windows]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Import baseline into DEV
+        shell: bash
+        env:
+          QEM_HOST: ${{ vars.QEM_HOST }}
+          QEM_SERVER: ${{ vars.REPLICATE_SERVER }}
+          QEM_PAT: ${{ secrets.QEM_PAT }}
+          QEM_USER: ${{ secrets.QEM_USER }}
+          QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
+        run: ./scripts/qem_baseline.sh import
