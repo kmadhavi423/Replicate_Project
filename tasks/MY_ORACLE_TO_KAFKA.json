@@ -1,14 +1,24 @@
 {
   "_version": {
     "fips": 0,
-    "version": "2026.5.0.423",
+    "version": "2026.5.0.108",
     "version_major": 2026,
     "version_minor": 5,
-    "version_revision": 423
+    "version_revision": 108
   },
   "cmd.replication_definition": {
     "tasks": [
       {
+        "error_behavior": {
+          "apply_error_behavior": {},
+          "data_error_behavior": {
+            "escalation_policy": "ERROR_POLICY_STOP_TASK",
+            "nullability_check_data_error": "NO",
+            "policy": "ERROR_POLICY_SUSPEND_TABLE"
+          },
+          "recoverable_error_behavior": {},
+          "table_error_behavior": {}
+        },
         "source": {
           "rep_source": {
             "database_name": "Oracle GOVT SRC",
@@ -95,7 +105,9 @@
               "header_columns_settings": {}
             },
             "customized_charset_settings": {
-              "validation": {}
+              "validation": {
+                "sub_char": 0
+              }
             },
             "data_batching_settings": {},
             "data_batching_table_settings": {},
@@ -109,13 +121,14 @@
             "statistics_table_settings": {},
             "status_table_settings": {},
             "suspended_tables_table_settings": {},
-            "task_uuid": "5aa0a2cc-886c-ed42-a702-2f7fbc51158d"
+            "task_uuid": "d1dd98e6-428c-4842-80ec-cb0a82bbe9f5"
           },
           "sorter_settings": {
             "local_transactions_storage": {}
           },
           "source_settings": {},
           "target_settings": {
+            "artifacts_cleanup_enabled": false,
             "ddl_handling_policy": {},
             "ftm_settings": {},
             "queue_settings": {
@@ -127,6 +140,6 @@
       }
     ]
   },
-  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-02 01:34:45.677652",
-  "name": "MY_ORACLE_TO_KAFKA__2026-11-02--01-34-45-677652"
+  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:54:29.618215",
+  "name": "MY_ORACLE_TO_KAFKA__2026-11-02--08-54-29-618215"
 }

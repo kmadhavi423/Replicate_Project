@@ -1,10 +1,10 @@
 {
   "_version": {
     "fips": 0,
-    "version": "2026.5.0.423",
+    "version": "2026.5.0.108",
     "version_major": 2026,
     "version_minor": 5,
-    "version_revision": 423
+    "version_revision": 108
   },
   "cmd.replication_definition": {
     "tasks": [
@@ -108,7 +108,7 @@
             "statistics_table_settings": {},
             "status_table_settings": {},
             "suspended_tables_table_settings": {},
-            "task_uuid": "2e36dd95-c80e-ad4e-b275-e97626d16307"
+            "task_uuid": "352b27ba-3744-da49-95ac-796c0df82ce9"
           },
           "sorter_settings": {
             "local_transactions_storage": {}
@@ -126,6 +126,6 @@
       }
     ]
   },
-  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-02 01:34:47.111591",
-  "name": "MY_SQL_SERVER_TO_MYSQL__2026-11-02--01-34-47-111591"
+  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:54:29.125810",
+  "name": "MY_SQL_SERVER_TO_MYSQL__2026-11-02--08-54-29-125810"
 }

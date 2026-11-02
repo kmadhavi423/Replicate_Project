@@ -1,0 +1,184 @@
+{
+  "_version": {
+    "fips": 0,
+    "version": "2026.5.0.108",
+    "version_major": 2026,
+    "version_minor": 5,
+    "version_revision": 108
+  },
+  "cmd.replication_definition": {
+    "tasks": [
+      {
+        "configurations": [
+          {
+            "name": "HR.USER_CONTACTS"
+          }
+        ],
+        "error_behavior": {
+          "apply_error_behavior": {},
+          "data_error_behavior": {},
+          "recoverable_error_behavior": {},
+          "table_error_behavior": {}
+        },
+        "loggers": {
+          "$type": "RepTaskLoggers",
+          "SOURCE_CAPTURE": "DETAILED_DEBUG",
+          "SOURCE_UNLOAD": "DETAILED_DEBUG",
+          "loggers_configuration": {}
+        },
+        "source": {
+          "rep_source": {
+            "database_name": "QMI_ORACLE_SRC",
+            "source_name": "QMI_ORACLE_SRC"
+          },
+          "source_tables": {
+            "explicit_included_tables": [
+              {
+                "name": "USER_CONTACTS",
+                "orig_db_id": 77469,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 25,
+                "name": "COUNTRIES",
+                "orig_db_id": 75744,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 27,
+                "name": "DEPARTMENTS",
+                "orig_db_id": 75749,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 107,
+                "name": "EMPLOYEES",
+                "orig_db_id": 75754,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 19,
+                "name": "JOBS",
+                "orig_db_id": 75752,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 10,
+                "name": "JOB_HISTORY",
+                "orig_db_id": 75758,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 23,
+                "name": "LOCATIONS",
+                "orig_db_id": 75746,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 4,
+                "name": "REGIONS",
+                "orig_db_id": 75742,
+                "owner": "HR",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              }
+            ],
+            "name": "QMI_ORACLE_SRC"
+          }
+        },
+        "targets": [
+          {
+            "rep_target": {
+              "database_name": "QMI_TARGET_ORACLE",
+              "target_name": "QMI_TARGET_ORACLE",
+              "target_state": "DISABLED"
+            }
+          }
+        ],
+        "task": {
+          "name": "MY_ORACLE_TO_ORACLE",
+          "source_name": "QMI_ORACLE_SRC",
+          "target_names": [
+            "QMI_TARGET_ORACLE"
+          ]
+        },
+        "task_settings": {
+          "common_settings": {
+            "audit_table_settings": {},
+            "batch_apply_timeout": 100,
+            "batch_apply_timeout_min": 99,
+            "bidi_table_settings": {},
+            "change_table_settings": {
+              "handle_ddl": false,
+              "header_columns_settings": {}
+            },
+            "customized_charset_settings": {
+              "validation": {
+                "sub_char": 0
+              }
+            },
+            "data_batching_settings": {},
+            "data_batching_table_settings": {},
+            "ddl_history_table_settings": {},
+            "dr_settings": {},
+            "exception_table_settings": {},
+            "history_table_settings": {},
+            "log_stream_settings_depricated": {},
+            "recovery_table_settings": {},
+            "save_changes_enabled": true,
+            "statistics_table_settings": {},
+            "status_table_settings": {},
+            "suspended_tables_table_settings": {},
+            "task_uuid": "619d8847-5627-d848-ac8e-e0cfb515c087"
+          },
+          "sorter_settings": {
+            "local_transactions_storage": {}
+          },
+          "source_settings": {},
+          "target_settings": {
+            "artifacts_cleanup_enabled": false,
+            "ddl_handling_policy": {},
+            "default_schema": "TGT_USER",
+            "ftm_settings": {},
+            "queue_settings": {
+              "key_shape": {},
+              "message_shape": {}
+            }
+          }
+        }
+      }
+    ]
+  },
+  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:54:08.504369",
+  "name": "MY_ORACLE_TO_ORACLE__2026-11-02--08-54-08-504369"
+}

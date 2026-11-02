@@ -1,0 +1,492 @@
+{
+  "_version": {
+    "fips": 0,
+    "version": "2026.5.0.108",
+    "version_major": 2026,
+    "version_minor": 5,
+    "version_revision": 108
+  },
+  "cmd.replication_definition": {
+    "tasks": [
+      {
+        "configurations": [
+          {
+            "name": "R4S - QLIK CUSTOM.CDPOS"
+          }
+        ],
+        "error_behavior": {
+          "apply_error_behavior": {
+            "insert_policy": "ERROR_POLICY_MERGE_MODE",
+            "update_policy": "ERROR_POLICY_UPSERT_MODE"
+          },
+          "data_error_behavior": {
+            "nullability_check_data_error": "NO",
+            "policy": "ERROR_POLICY_SUSPEND_TABLE",
+            "truncation_policy": "ERROR_POLICY_IGNORE_RECORD"
+          },
+          "recoverable_error_behavior": {},
+          "table_error_behavior": {}
+        },
+        "global_manipulation": {
+          "name": "global_manipulation",
+          "rules": [
+            {
+              "action": "REPLACE_COLUMN_VALUE",
+              "column": {
+                "computation_expression": "rtrim(ifnull($AR_M_SOURCE_COLUMN_DATA,''),' ')",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 0,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_data_type": "kAR_DATA_TYPE_STR",
+                "where_data_type_group": "SPECIFIC_DATATYPE",
+                "where_expression": "$AR_M_SOURCE_COLUMN_NAME NOT like '%/%'",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "name": "STRING REMOVE NULLS",
+              "sub_action": "RENAME"
+            },
+            {
+              "action": "REPLACE_COLUMN_VALUE",
+              "column": {
+                "computation_expression": "ifnull(max(CASE\nWHEN (\n  strftime(\"%m\",ifnull(coalesce(date($AR_M_SOURCE_COLUMN_DATA),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2)),date('1900-01-01')),date('1900-01-01')))='02'\n  and strftime(\"%d\",ifnull(coalesce(date($AR_M_SOURCE_COLUMN_DATA),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2)),date('1900-01-01')),date('1900-01-01')))='29'\n  and\n  (\n    strftime(\"%Y\",ifnull(coalesce(date($AR_M_SOURCE_COLUMN_DATA),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2)),date('1900-01-01')),date('1900-01-01')))%400!=0\n    and\n        (NOT\n          (\n          strftime(\"%Y\",ifnull(coalesce(date($AR_M_SOURCE_COLUMN_DATA),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2)),date('1900-01-01')),date('1900-01-01')))%4=0\n          AND strftime(\"%Y\",ifnull(coalesce(date($AR_M_SOURCE_COLUMN_DATA),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2)),date('1900-01-01')),date('1900-01-01')))%100!=0\n          )\n        )\n  )\n) THEN date('1900-01-01')\nWHEN substr($AR_M_SOURCE_COLUMN_DATA,1,4) = '9999' and substr($AR_M_SOURCE_COLUMN_DATA,6,2) = '12'\n\tthen date('9999-12-31')\nELSE ifnull(\n\tcoalesce(\n\t\tmin(date($AR_M_SOURCE_COLUMN_DATA),date($AR_M_SOURCE_COLUMN_DATA,'+1 months','start of month','-1 days')),\n\t\tmin(date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2)),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2),'+1 months','start of month','-1 days')),\n\t\tmin(date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2) || '-' || strftime('%d',date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2) || '-01','-4 years','+1 months','start of month','-1 days'))),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2) || '-' || strftime('%d',date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,6,2) || '-01','-4 years','+1 months','start of month','-1 days')),'+1 months','start of month','-1 days')),\n\t\tmin(date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || strftime('%d',date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-01','-4 years','+1 months','start of month','-1 days'))),date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-' || strftime('%d',date(substr($AR_M_SOURCE_COLUMN_DATA,1,4) || '-' || substr($AR_M_SOURCE_COLUMN_DATA,9,2) || '-01','-4 years','+1 months','start of month','-1 days')),'+1 months','start of month','-1 days'))\n\t),\n\tdate('1900-01-01')\n\t)\nEND,date('1900-01-01')),date('1900-01-01'))",
+                "new_data_type": "kAR_DATA_TYPE_DATE",
+                "new_length": 0,
+                "new_precision": 0,
+                "new_scale": 0,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_data_type": "kAR_DATA_TYPE_DATE",
+                "where_data_type_group": "SPECIFIC_DATATYPE",
+                "where_expression": "$AR_M_SOURCE_COLUMN_NAME NOT like '%/%'",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "name": "DATE NULLS TO VALUES",
+              "sub_action": "RENAME"
+            },
+            {
+              "action": "REPLACE_COLUMN_VALUE",
+              "column": {
+                "computation_expression": "ifnull(time($AR_M_SOURCE_COLUMN_DATA),time('00:00:00'))",
+                "new_data_type": "kAR_DATA_TYPE_TIME",
+                "new_length": 0,
+                "new_precision": 0,
+                "new_scale": 0,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_data_type": "kAR_DATA_TYPE_TIME",
+                "where_data_type_group": "SPECIFIC_DATATYPE",
+                "where_expression": "$AR_M_SOURCE_COLUMN_NAME NOT like '%/%'",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "name": "TIME NULLS TO VALUES",
+              "sub_action": "RENAME"
+            },
+            {
+              "action": "REPLACE_COLUMN_VALUE",
+              "column": {
+                "computation_expression": "ifnull(datetime($AR_M_SOURCE_COLUMN_DATA),datetime('1900-01-01 00:00:00'))",
+                "new_data_type": "kAR_DATA_TYPE_TIMESTAMP",
+                "new_length": 0,
+                "new_precision": 0,
+                "new_scale": 0,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_data_type": "kAR_DATA_TYPE_TIMESTAMP",
+                "where_data_type_group": "SPECIFIC_DATATYPE",
+                "where_expression": "$AR_M_SOURCE_COLUMN_NAME NOT like '%/%'",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "name": "DATETIME NULLS TO VALUES",
+              "sub_action": "RENAME"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "\"AP\"",
+                "is_pk": true,
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 5,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'SOURCE_SYSTEM'",
+              "name": "Add Source System Name",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "datetime('now')",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 20,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QREP_TIMESTAMP'",
+              "name": "Add QREP_TIMESTAMP",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "ifnull(operation_indicator('D', 'U', 'I'),'I')",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 3,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'ZRECORD_MODE'",
+              "name": "Add ZRECORD_MODE",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "datetime($AR_V_TASK_START_TIME,'utc')",
+                "new_data_type": "kAR_DATA_TYPE_TIMESTAMP",
+                "new_length": 0,
+                "new_precision": 0,
+                "new_scale": 6,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_TASK_START_TIME_UTC'",
+              "name": "QR_TASK_START_TIME_UTC",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_V_HOST_NAME",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 255,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_SERVER_NAME'",
+              "name": "QR_SERVER_NAME",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_V_TASK_NAME",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 255,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_TASK_NAME'",
+              "name": "QR_TASK_NAME",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_V_TASK_UUID",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 260,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_TASK_UUID'",
+              "name": "QR_TASK_UUID",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_V_SOURCE_NAME",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 255,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_SOURCE_ENDPOINT'",
+              "name": "QR_SOURCE_ENDPOINT",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_V_TARGET_NAME",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 255,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_TARGET_ENDPOINT'",
+              "name": "QR_TARGET_ENDPOINT",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_H_STREAM_POSITION",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 500,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'QR_STREAM_POSITION'",
+              "name": "ADD STREAM POSITION",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "CHANGE_COLUMN_DATA_TYPE",
+              "column": {
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 8000,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_data_type": "kAR_DATA_TYPE_STR",
+                "where_data_type_group": "SPECIFIC_DATATYPE",
+                "where_expression": "$AR_M_SOURCE_COLUMN_NAME NOT like '%/%'\n/*james shields: exclude columns with slash bec otherwise error is thrown*/",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "description": "adding this transformation to extend the declare string length of the attrep_change tables in snowflake to avoid COPY into truncate errors",
+              "enabled": false,
+              "name": "STRING_EXTEND_LENGTH",
+              "sub_action": "RENAME"
+            },
+            {
+              "action": "CHANGE_COLUMN_DATA_TYPE",
+              "column": {
+                "new_data_type": "kAR_DATA_TYPE_WSTR",
+                "new_length": 8000,
+                "new_precision": 0,
+                "new_scale": 0,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_data_type": "kAR_DATA_TYPE_WSTR",
+                "where_data_type_group": "SPECIFIC_DATATYPE",
+                "where_expression": "$AR_M_SOURCE_COLUMN_NAME NOT like '%/%'",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "description": "adding this transformation to extend the declare string length of the attrep_change tables in snowflake to avoid COPY into truncate errors",
+              "enabled": false,
+              "name": "WSTRING_EXTEND_LENGTH",
+              "sub_action": "RENAME"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "$AR_H_USER",
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 8000,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "enabled": false,
+              "expression": "'QR_APPLICATION_USER'",
+              "name": "ADD QR_APPLICATION_USER",
+              "sub_action": "RENAME_EXPRESSION"
+            },
+            {
+              "action": "ADD_COLUMN",
+              "column": {
+                "computation_expression": "\"TESTING\"",
+                "is_pk": true,
+                "new_data_type": "kAR_DATA_TYPE_STR",
+                "new_length": 50,
+                "new_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED",
+                "where_column_name": "%",
+                "where_sub_data_type": "KAR_SUB_DATA_TYPE_UNSPECIFIED"
+              },
+              "expression": "'XYZ_PK_TEST'",
+              "name": "Add column 1",
+              "sub_action": "RENAME_EXPRESSION"
+            }
+          ]
+        },
+        "loggers": {
+          "$type": "RepTaskLoggers",
+          "SOURCE_CAPTURE": "INFO",
+          "SOURCE_UNLOAD": "INFO",
+          "TARGET_APPLY": "INFO",
+          "TARGET_LOAD": "INFO",
+          "loggers_configuration": {}
+        },
+        "manipulations": [
+          {
+            "name": "R4S - QLIK CUSTOM.CDPOS",
+            "table_manipulation": {
+              "fl_passthru_filter": "1=0",
+              "name": "CDPOS",
+              "new_table_name": "CDPOS_PK_TEST",
+              "owner": "R4S - QLIK CUSTOM",
+              "pk_manipulated": {
+                "name": "CDPOS",
+                "pk_origin": "primary_key_origin_source_unq_idx",
+                "segments": [
+                  {
+                    "name": "MANDANT",
+                    "position": 1
+                  },
+                  {
+                    "id": 1,
+                    "name": "OBJECTCLAS",
+                    "position": 2
+                  },
+                  {
+                    "id": 2,
+                    "name": "OBJECTID",
+                    "position": 3
+                  },
+                  {
+                    "id": 3,
+                    "name": "CHANGENR",
+                    "position": 4
+                  },
+                  {
+                    "id": 4,
+                    "name": "TABNAME",
+                    "position": 5
+                  },
+                  {
+                    "id": 5,
+                    "name": "TABKEY",
+                    "position": 6
+                  },
+                  {
+                    "id": 6,
+                    "name": "FNAME",
+                    "position": 7
+                  },
+                  {
+                    "id": 7,
+                    "name": "CHNGIND",
+                    "position": 8
+                  }
+                ]
+              },
+              "source_table_settings": {
+                "unload_segments": {
+                  "entry_names": {},
+                  "ranges": {}
+                }
+              }
+            }
+          }
+        ],
+        "source": {
+          "rep_source": {
+            "database_name": "S02_AP_LST_CDPOS",
+            "source_name": "S02_AP_LST_CDPOS"
+          },
+          "source_tables": {
+            "explicit_included_tables": [
+              {
+                "description": "<b>Source:</b> CDPOS</br><b>Class:</b> Transparent</br><b>Description:</b> Change document items",
+                "name": "CDPOS",
+                "owner": "R4S - QLIK CUSTOM",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                }
+              }
+            ],
+            "name": "S02_AP_LST_CDPOS"
+          }
+        },
+        "targets": [
+          {
+            "rep_target": {
+              "database_name": "T06_ENTP_SNF_Cloud_EMPS_RAW",
+              "target_name": "T06_ENTP_SNF_Cloud_EMPS_RAW",
+              "target_state": "DISABLED"
+            }
+          }
+        ],
+        "task": {
+          "description": "xom_action:Create tkt,xom_app_support_group:EDSP QLIK - Infosys,xom_env:Production,xom_error_sn_impact:2,xom_error_sn_urgency:1,xom_latency_sn_impact:2,xom_latency_sn_urgency:1,xom_lat_target:3600,xom_app_id:APP-8513",
+          "name": "S02_AP_LST_CDH_CDPOS_Qlik",
+          "source_name": "S02_AP_LST_CDPOS",
+          "target_names": [
+            "T06_ENTP_SNF_Cloud_EMPS_RAW"
+          ]
+        },
+        "task_settings": {
+          "common_settings": {
+            "audit_table_settings": {},
+            "batch_apply_memory_limit": 1800,
+            "batch_apply_timeout": 360,
+            "batch_apply_timeout_min": 120,
+            "batch_apply_use_parallel_bulk": true,
+            "bidi_table_settings": {},
+            "change_table_settings": {
+              "handle_ddl": false,
+              "header_columns_settings": {},
+              "skip_before_image": true,
+              "start_table_behaviour": "NOTHING"
+            },
+            "customized_charset_settings": {
+              "validation": {
+                "sub_char": 0
+              }
+            },
+            "data_batching_settings": {},
+            "data_batching_table_settings": {},
+            "ddl_history_table_settings": {},
+            "dr_settings": {},
+            "exception_table_enabled": false,
+            "exception_table_settings": {},
+            "feature_flag_values": [
+              {
+                "array_values": [
+                  "0"
+                ],
+                "name": "use_manipulation_pk_for_apply"
+              }
+            ],
+            "history_table_settings": {},
+            "lob_max_size": 2,
+            "log_stream_settings_depricated": {},
+            "parallel_bulk_max_num_threads": 50,
+            "recovery_table_settings": {},
+            "statistics_table_settings": {},
+            "status_table_settings": {},
+            "suspended_tables_table_enabled": true,
+            "suspended_tables_table_settings": {},
+            "task_uuid": "afc2df7e-39ac-fa49-9310-33e4d5f45c9f",
+            "write_full_logging": false
+          },
+          "sorter_settings": {
+            "local_transactions_storage": {
+              "memory_keep_time": 5000,
+              "memory_limit_total": 500
+            }
+          },
+          "source_settings": {},
+          "target_settings": {
+            "artifacts_cleanup_enabled": false,
+            "control_schema": "QLIK_CONTROL",
+            "ddl_handling_policy": {},
+            "default_schema": "S2T",
+            "ftm_settings": {},
+            "handle_drop_ddl": false,
+            "handle_truncate_ddl": false,
+            "queue_settings": {
+              "key_shape": {},
+              "message_shape": {}
+            },
+            "statements_cache_size": 25
+          }
+        }
+      }
+    ]
+  },
+  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:53:57.754620",
+  "name": "S02_AP_LST_CDH_CDPOS_Qlik__2026-11-02--08-53-57-754620"
+}
