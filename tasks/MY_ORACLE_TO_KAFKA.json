@@ -1,0 +1,132 @@
+{
+  "_version": {
+    "fips": 0,
+    "version": "2026.5.0.423",
+    "version_major": 2026,
+    "version_minor": 5,
+    "version_revision": 423
+  },
+  "cmd.replication_definition": {
+    "tasks": [
+      {
+        "source": {
+          "rep_source": {
+            "database_name": "Oracle GOVT SRC",
+            "source_name": "Oracle GOVT SRC"
+          },
+          "source_tables": {
+            "explicit_included_tables": [
+              {
+                "estimated_size": 6970,
+                "name": "CONTRACTING_ACTIONS",
+                "orig_db_id": 76476,
+                "owner": "GOVT",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 25517,
+                "name": "FUNDING_AGENCIES",
+                "orig_db_id": 76481,
+                "owner": "GOVT",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 2968,
+                "name": "PRODUCTS_OR_SERVICES",
+                "orig_db_id": 76484,
+                "owner": "GOVT",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 161,
+                "name": "PRODUCT_OR_SERVICE_CATEGORY",
+                "orig_db_id": 76486,
+                "owner": "GOVT",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 3031,
+                "name": "RECIPIENTS",
+                "orig_db_id": 76488,
+                "owner": "GOVT",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              }
+            ],
+            "name": "Oracle GOVT SRC"
+          }
+        },
+        "targets": [
+          {
+            "rep_target": {
+              "database_name": "Confluent",
+              "target_name": "Confluent",
+              "target_state": "DISABLED"
+            }
+          }
+        ],
+        "task": {
+          "name": "MY_ORACLE_TO_KAFKA",
+          "source_name": "Oracle GOVT SRC",
+          "target_names": [
+            "Confluent"
+          ]
+        },
+        "task_settings": {
+          "common_settings": {
+            "apply_changes_enabled": false,
+            "audit_table_settings": {},
+            "bidi_table_settings": {},
+            "change_table_settings": {
+              "header_columns_settings": {}
+            },
+            "customized_charset_settings": {
+              "validation": {}
+            },
+            "data_batching_settings": {},
+            "data_batching_table_settings": {},
+            "ddl_history_table_settings": {},
+            "dr_settings": {},
+            "exception_table_settings": {},
+            "history_table_settings": {},
+            "log_stream_settings_depricated": {},
+            "recovery_table_settings": {},
+            "save_changes_enabled": true,
+            "statistics_table_settings": {},
+            "status_table_settings": {},
+            "suspended_tables_table_settings": {},
+            "task_uuid": "5aa0a2cc-886c-ed42-a702-2f7fbc51158d"
+          },
+          "sorter_settings": {
+            "local_transactions_storage": {}
+          },
+          "source_settings": {},
+          "target_settings": {
+            "ddl_handling_policy": {},
+            "ftm_settings": {},
+            "queue_settings": {
+              "key_shape": {},
+              "message_shape": {}
+            }
+          }
+        }
+      }
+    ]
+  },
+  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-02 01:34:45.677652",
+  "name": "MY_ORACLE_TO_KAFKA__2026-11-02--01-34-45-677652"
+}

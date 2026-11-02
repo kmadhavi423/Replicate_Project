@@ -1,0 +1,131 @@
+{
+  "_version": {
+    "fips": 0,
+    "version": "2026.5.0.423",
+    "version_major": 2026,
+    "version_minor": 5,
+    "version_revision": 423
+  },
+  "cmd.replication_definition": {
+    "tasks": [
+      {
+        "source": {
+          "rep_source": {
+            "database_name": "SQL Server SRC GOVT",
+            "source_name": "SQL Server SRC GOVT"
+          },
+          "source_tables": {
+            "explicit_included_tables": [
+              {
+                "estimated_size": 10170,
+                "name": "EEOD_Sample_Data",
+                "orig_db_id": 581577110,
+                "owner": "dbo",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 410,
+                "name": "FISCAL_AIM_Sample_Data",
+                "orig_db_id": 597577167,
+                "owner": "dbo",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 595,
+                "name": "FISCAL_Budget_Sample_Data",
+                "orig_db_id": 613577224,
+                "owner": "dbo",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 3013,
+                "name": "FISCAL_MOICOI_Sample_Data",
+                "orig_db_id": 629577281,
+                "owner": "dbo",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 17764,
+                "name": "HCDC_Sample_Data",
+                "orig_db_id": 645577338,
+                "owner": "dbo",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              }
+            ],
+            "name": "SQL Server SRC GOVT"
+          }
+        },
+        "targets": [
+          {
+            "rep_target": {
+              "database_name": "MySQL TGT",
+              "target_name": "MySQL TGT",
+              "target_state": "DISABLED"
+            }
+          }
+        ],
+        "task": {
+          "name": "MY_SQL_SERVER_TO_MYSQL",
+          "source_name": "SQL Server SRC GOVT",
+          "target_names": [
+            "MySQL TGT"
+          ]
+        },
+        "task_settings": {
+          "common_settings": {
+            "audit_table_settings": {},
+            "bidi_table_settings": {},
+            "change_table_settings": {
+              "handle_ddl": false,
+              "header_columns_settings": {}
+            },
+            "customized_charset_settings": {
+              "validation": {}
+            },
+            "data_batching_settings": {},
+            "data_batching_table_settings": {},
+            "ddl_history_table_settings": {},
+            "dr_settings": {},
+            "exception_table_settings": {},
+            "history_table_settings": {},
+            "log_stream_settings_depricated": {},
+            "recovery_table_settings": {},
+            "statistics_table_settings": {},
+            "status_table_settings": {},
+            "suspended_tables_table_settings": {},
+            "task_uuid": "2e36dd95-c80e-ad4e-b275-e97626d16307"
+          },
+          "sorter_settings": {
+            "local_transactions_storage": {}
+          },
+          "source_settings": {},
+          "target_settings": {
+            "ddl_handling_policy": {},
+            "ftm_settings": {},
+            "queue_settings": {
+              "key_shape": {},
+              "message_shape": {}
+            }
+          }
+        }
+      }
+    ]
+  },
+  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-02 01:34:47.111591",
+  "name": "MY_SQL_SERVER_TO_MYSQL__2026-11-02--01-34-47-111591"
+}
