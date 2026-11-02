@@ -1,13 +1,26 @@
 name: Promote Replicate tasks
+
+# Manual only: someone clicks "Run workflow" to promote to PROD.
+# Imports only the task files that changed since the last promotion.
 on:
-  push:
-    branches: [main]
-    paths: ['tasks/**']
-  workflow_dispatch:   # a manual run imports every task file
+  workflow_dispatch:
+    inputs:
+      base:
+        description: 'Compare against this commit, tag or branch (empty = last promotion, tag promoted-prod)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Only list the files that would be imported'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
   changes:
-    runs-on: ubuntu-latest   # this job needs no QEM access
+    if: github.ref == 'refs/heads/main'   # PROD is only promoted from main
+    runs-on: [self-hosted, windows]
     outputs:
       files: ${{ steps.diff.outputs.files }}
       any: ${{ steps.diff.outputs.any }}
@@ -16,15 +29,33 @@ jobs:
         with:
           fetch-depth: 0
       - id: diff
+        shell: bash
         env:
-          BEFORE: ${{ github.event.before }}
+          BASE_INPUT: ${{ inputs.base }}
         run: |
-          ZERO=0000000000000000000000000000000000000000
-          if [ -z "$BEFORE" ] || [ "$BEFORE" = "$ZERO" ]; then
-            FILES=$(ls tasks/*.json 2>/dev/null || true)
-          else
-            FILES=$(git diff --name-only --diff-filter=AM "$BEFORE" "$GITHUB_SHA" -- 'tasks/*.json')
+          set -euo pipefail
+          BASE="$BASE_INPUT"
+          if [ -z "$BASE" ]; then
+            if git rev-parse -q --verify refs/tags/promoted-prod > /dev/null; then
+              BASE=promoted-prod
+            else
+              echo "No base given and no promoted-prod tag exists yet." >&2
+              echo "Tag the commit that matches PROD, or enter a base commit." >&2
+              exit 1
+            fi
           fi
+          echo "Comparing $BASE with $GITHUB_SHA"
+          FILES=$(git diff --name-only --diff-filter=AM "$BASE" "$GITHUB_SHA" -- 'tasks/*.json')
+          DELETED=$(git diff --name-only --diff-filter=D "$BASE" "$GITHUB_SHA" -- 'tasks/*.json')
+          {
+            echo "### Task files to import into PROD"
+            if [ -n "$FILES" ]; then echo "$FILES" | sed 's/^/- /'; else echo "None"; fi
+            if [ -n "$DELETED" ]; then
+              echo ""
+              echo "### Deleted in Git (not applied; delete these tasks in QEM yourself)"
+              echo "$DELETED" | sed 's/^/- /'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
           {
             echo 'files<<EOF'
             echo "$FILES"
@@ -32,29 +63,11 @@ jobs:
             if [ -n "$FILES" ]; then echo 'any=true'; else echo 'any=false'; fi
           } >> "$GITHUB_OUTPUT"
 
-  test:
-    needs: changes
-    if: needs.changes.outputs.any == 'true'
-    runs-on: [self-hosted, windows]
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
-      - name: Import changed tasks into TEST
-        shell: bash
-        env:
-          QEM_HOST: ${{ vars.QEM_HOST }}
-          QEM_SERVER: ${{ vars.REPLICATE_SERVER }}
-          QEM_PAT: ${{ secrets.QEM_PAT }}
-          QEM_USER: ${{ secrets.QEM_USER }}
-          QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
-          CHANGED_FILES: ${{ needs.changes.outputs.files }}
-        run: ./scripts/qem_import.sh
-
   prod:
-    needs: [changes, test]
-    if: needs.changes.outputs.any == 'true'
+    needs: changes
+    if: github.ref == 'refs/heads/main' && needs.changes.outputs.any == 'true' && !inputs.dry_run
     runs-on: [self-hosted, windows]
-    environment: prod   # add required reviewers on this environment
+    environment: prod
     steps:
       - uses: actions/checkout@v4
       - name: Import changed tasks into PROD
@@ -67,3 +80,9 @@ jobs:
           QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
           CHANGED_FILES: ${{ needs.changes.outputs.files }}
         run: ./scripts/qem_import.sh
+      - name: Mark this commit as promoted
+        shell: bash
+        run: |
+          set -euo pipefail
+          git tag -f promoted-prod "$GITHUB_SHA"
+          git push -f origin refs/tags/promoted-prod

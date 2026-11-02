@@ -31,6 +31,12 @@ jobs:
           fi
           git commit -m "Baseline: PROD tasks [skip ci]"
           git push origin HEAD:main
+      - name: Mark the baseline as promoted
+        shell: bash
+        run: |
+          set -euo pipefail
+          git tag -f promoted-prod HEAD
+          git push -f origin refs/tags/promoted-prod
 
   import-dev:
     needs: export-prod
