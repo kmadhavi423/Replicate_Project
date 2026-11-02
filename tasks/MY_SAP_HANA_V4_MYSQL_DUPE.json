@@ -1,0 +1,110 @@
+{
+  "_version": {
+    "fips": 0,
+    "version": "2026.5.0.108",
+    "version_major": 2026,
+    "version_minor": 5,
+    "version_revision": 108
+  },
+  "cmd.replication_definition": {
+    "tasks": [
+      {
+        "source": {
+          "rep_source": {
+            "database_name": "MY_SAP_HANA_SRC",
+            "source_name": "MY_SAP_HANA_SRC"
+          },
+          "source_tables": {
+            "explicit_included_tables": [
+              {
+                "estimated_size": 355837,
+                "name": "TEST_TBL1",
+                "orig_db_id": 30129882,
+                "owner": "JITEN_TEST_V4",
+                "partition_ids": [
+                  1090939360760
+                ],
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 355836,
+                "name": "TEST_TBL2",
+                "orig_db_id": 30129897,
+                "owner": "JITEN_TEST_V4",
+                "partition_ids": [
+                  1090939360761
+                ],
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              }
+            ],
+            "name": "MY_SAP_HANA_SRC"
+          }
+        },
+        "targets": [
+          {
+            "rep_target": {
+              "database_name": "MY_ORACLE_tgt",
+              "target_name": "MY_ORACLE_tgt",
+              "target_state": "DISABLED"
+            }
+          }
+        ],
+        "task": {
+          "name": "MY_SAP_HANA_V4_MYSQL_DUPE",
+          "source_name": "MY_SAP_HANA_SRC",
+          "target_names": [
+            "MY_ORACLE_tgt"
+          ]
+        },
+        "task_settings": {
+          "common_settings": {
+            "audit_table_settings": {},
+            "bidi_table_settings": {},
+            "change_table_settings": {
+              "handle_ddl": false,
+              "header_columns_settings": {}
+            },
+            "customized_charset_settings": {
+              "validation": {
+                "sub_char": 0
+              }
+            },
+            "data_batching_settings": {},
+            "data_batching_table_settings": {},
+            "ddl_history_table_settings": {},
+            "dr_settings": {},
+            "exception_table_settings": {},
+            "history_table_settings": {},
+            "log_stream_settings_depricated": {},
+            "recovery_table_settings": {},
+            "statistics_table_settings": {},
+            "status_table_settings": {},
+            "suspended_tables_table_settings": {},
+            "task_uuid": "9703ac97-2bac-a243-833f-fe0e0263a32f"
+          },
+          "sorter_settings": {
+            "local_transactions_storage": {}
+          },
+          "source_settings": {},
+          "target_settings": {
+            "ddl_handling_policy": {},
+            "default_schema": "tgt_user",
+            "ftm_settings": {},
+            "queue_settings": {
+              "key_shape": {},
+              "message_shape": {}
+            }
+          }
+        }
+      }
+    ]
+  },
+  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:53:28.052407",
+  "name": "MY_SAP_HANA_V4_MYSQL_DUPE__2026-11-02--08-53-28-052407"
+}

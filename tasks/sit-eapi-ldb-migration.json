@@ -1,0 +1,200 @@
+{
+  "_version": {
+    "fips": 0,
+    "version": "2026.5.0.108",
+    "version_major": 2026,
+    "version_minor": 5,
+    "version_revision": 108
+  },
+  "cmd.replication_definition": {
+    "tasks": [
+      {
+        "configurations": [
+          {
+            "name": "LDB_OWNER.BATCH_LOG"
+          }
+        ],
+        "error_behavior": {
+          "apply_error_behavior": {
+            "insert_policy": "ERROR_POLICY_MERGE_MODE",
+            "update_policy": "ERROR_POLICY_UPSERT_MODE"
+          },
+          "data_error_behavior": {
+            "nullability_check_data_error": "NO"
+          },
+          "recoverable_error_behavior": {},
+          "table_error_behavior": {}
+        },
+        "loggers": {
+          "$type": "RepTaskLoggers",
+          "SOURCE_CAPTURE": "DEBUG",
+          "TARGET_APPLY": "DEBUG",
+          "loggers_configuration": {}
+        },
+        "source": {
+          "rep_source": {
+            "database_name": "ea-sit-ldb-newserver",
+            "source_name": "ea-sit-ldb-newserver"
+          },
+          "source_tables": {
+            "explicit_included_tables": [
+              {
+                "estimated_size": 19,
+                "name": "BATCH_LOG",
+                "orig_db_id": 75229,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 2727,
+                "name": "LOCATION_OTHER",
+                "orig_db_id": 75299,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 95216,
+                "name": "LOCATION_OTHER_HISTORY",
+                "orig_db_id": 75300,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 70338,
+                "name": "POWER_STORE",
+                "orig_db_id": 75356,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 403840,
+                "name": "POWER_STORE_HISTORY",
+                "orig_db_id": 75357,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 19610,
+                "name": "LOCATION_STORE",
+                "orig_db_id": 75325,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 18399494,
+                "name": "LOCATION_STORE_HISTORY",
+                "orig_db_id": 75119,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 66934,
+                "name": "LOCATION_TIME",
+                "orig_db_id": 75333,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              },
+              {
+                "estimated_size": 6667172,
+                "name": "LOCATION_TIME_HISTORY",
+                "orig_db_id": 75335,
+                "owner": "LDB_OWNER",
+                "sapdb_def_ext_for_logstream": {
+                  "$type": "SapdbOverLogstreamTableDefExt"
+                },
+                "validation_sampling_percentage": 0
+              }
+            ],
+            "name": "ea-sit-ldb-newserver"
+          }
+        },
+        "targets": [
+          {
+            "rep_target": {
+              "database_name": "ea-sit-ldb-oldserver",
+              "target_name": "ea-sit-ldb-oldserver",
+              "target_state": "DISABLED"
+            }
+          }
+        ],
+        "task": {
+          "description": "Migration of LDB tables from new server to old",
+          "name": "sit-eapi-ldb-migration",
+          "source_name": "ea-sit-ldb-newserver",
+          "target_names": [
+            "ea-sit-ldb-oldserver"
+          ]
+        },
+        "task_settings": {
+          "common_settings": {
+            "audit_table_settings": {},
+            "batch_apply_preserve_txn": true,
+            "batch_split_size": 5000,
+            "bidi_table_settings": {},
+            "change_table_settings": {
+              "handle_ddl": false,
+              "header_columns_settings": {}
+            },
+            "customized_charset_settings": {
+              "validation": {
+                "sub_char": 0
+              }
+            },
+            "data_batching_settings": {},
+            "data_batching_table_settings": {},
+            "ddl_history_table_settings": {},
+            "dr_settings": {},
+            "exception_table_settings": {},
+            "full_load_enabled": false,
+            "history_table_settings": {},
+            "log_stream_settings_depricated": {},
+            "recovery_table_settings": {},
+            "statistics_table_settings": {},
+            "status_table_settings": {},
+            "suspended_tables_table_settings": {},
+            "task_uuid": "c2376f42-3ba1-0948-beae-505ceebaebf4"
+          },
+          "sorter_settings": {
+            "local_transactions_storage": {}
+          },
+          "source_settings": {},
+          "target_settings": {
+            "artifacts_cleanup_enabled": false,
+            "ddl_handling_policy": {},
+            "ftm_settings": {},
+            "queue_settings": {
+              "key_shape": {},
+              "message_shape": {}
+            }
+          }
+        }
+      }
+    ]
+  },
+  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:54:09.002932",
+  "name": "sit-eapi-ldb-migration__2026-11-02--08-54-09-002932"
+}
