@@ -1,0 +1,24 @@
+name: QEM login check
+on: workflow_dispatch
+
+jobs:
+  check:
+    runs-on: [self-hosted, windows]
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+      - name: Log in to QEM and list tasks
+        shell: bash
+        env:
+          QEM_HOST: ${{ vars.QEM_HOST }}
+          QEM_SERVER: ${{ vars.REPLICATE_SERVER }}
+          QEM_PAT: ${{ secrets.QEM_PAT }}
+          QEM_USER: ${{ secrets.QEM_USER }}
+          QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
+        run: |
+          set -euo pipefail
+          source scripts/qem_lib.sh
+          qem_login
+          echo "QEM login OK"
+          curl -sS -f --header "EnterpriseManager.APISessionID: ${SESSION}" \
+            "${BASE}/servers/${QEM_SERVER}/tasks" | jq -r '.taskList[].name' | head -20
