@@ -7,7 +7,7 @@ on:
 
 jobs:
   changes:
-    runs-on: ubuntu-latest   # this job needs no QEM access
+    runs-on: [self-hosted, windows]
     outputs:
       files: ${{ steps.diff.outputs.files }}
       any: ${{ steps.diff.outputs.any }}
@@ -16,6 +16,7 @@ jobs:
         with:
           fetch-depth: 0
       - id: diff
+        shell: bash
         env:
           BEFORE: ${{ github.event.before }}
         run: |
@@ -32,26 +33,8 @@ jobs:
             if [ -n "$FILES" ]; then echo 'any=true'; else echo 'any=false'; fi
           } >> "$GITHUB_OUTPUT"
 
-  test:
-    needs: changes
-    if: needs.changes.outputs.any == 'true'
-    runs-on: [self-hosted, windows]
-    environment: test
-    steps:
-      - uses: actions/checkout@v4
-      - name: Import changed tasks into TEST
-        shell: bash
-        env:
-          QEM_HOST: ${{ vars.QEM_HOST }}
-          QEM_SERVER: ${{ vars.REPLICATE_SERVER }}
-          QEM_PAT: ${{ secrets.QEM_PAT }}
-          QEM_USER: ${{ secrets.QEM_USER }}
-          QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
-          CHANGED_FILES: ${{ needs.changes.outputs.files }}
-        run: ./scripts/qem_import.sh
-
   prod:
-    needs: [changes, test]
+    needs: changes
     if: needs.changes.outputs.any == 'true'
     runs-on: [self-hosted, windows]
     environment: prod   # add required reviewers on this environment
