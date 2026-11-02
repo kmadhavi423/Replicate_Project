@@ -31,17 +31,28 @@ qem_login() {
 }
 
 # Imports one task JSON file into QEM_SERVER. $1 = path to the file.
+# Prints QEM's own error message when the import fails, and returns 1.
 qem_import_file() {
-  local f="$1" task enc
+  local f="$1" task enc code resp
   task=$(basename "$f" .json)
   enc=$(jqx -rn --arg t "$task" '$t|@uri')
+  resp=".qem_import_response.tmp"
   echo "Importing ${task} into ${QEM_SERVER}"
-  curl -sS -f -X POST \
+  code=$(curl -sS -o "$resp" -w '%{http_code}' -X POST \
     --header "EnterpriseManager.APISessionID: ${SESSION}" \
     --header "Content-Type: application/json" \
     "${BASE}/servers/${QEM_SERVER}/tasks/${enc}?action=import" \
-    -T "$f"
-  echo
+    -T "$f")
+  if [ "$code" -ge 200 ] && [ "$code" -lt 300 ]; then
+    echo "  OK (HTTP ${code})"
+    rm -f "$resp"
+    return 0
+  fi
+  echo "  FAILED (HTTP ${code}). QEM said:" >&2
+  tr -d '\r' < "$resp" >&2 || true
+  echo >&2
+  rm -f "$resp"
+  return 1
 }
 
 # Exports one task from QEM_SERVER, without endpoints, to tasks/<name>.json. $1 = task name.
