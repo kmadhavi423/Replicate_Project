@@ -1,3 +1,15 @@
+# =============================================================================
+# QEM login check
+#
+# Purpose : prove that the runner can reach QEM and log in, before anything
+#           is exported or imported.
+# Start   : Actions > QEM login check > Run workflow.
+# Does    : logs in with the dev Environment's credentials and prints the first
+#           20 task names on the DEV server. It changes nothing.
+# Needs   : dev Environment with QEM_HOST and REPLICATE_SERVER (variables),
+#           QEM_USER and QEM_PASSWORD (secrets).
+# =============================================================================
+
 name: QEM login check
 on: workflow_dispatch
 

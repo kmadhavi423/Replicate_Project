@@ -1,3 +1,12 @@
+# =============================================================================
+# Runner check
+#
+# Purpose : confirm the self-hosted runner can see bash, jq and curl.
+# Start   : Actions > Runner check > Run workflow. It changes nothing.
+# Run it  : after installing the runner, and after any change to the PATH.
+# Needs   : the runner service running. No GitHub Environment.
+# =============================================================================
+
 name: Runner check
 on: workflow_dispatch
 

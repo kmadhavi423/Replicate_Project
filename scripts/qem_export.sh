@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
-# Exports tasks from QEM_SERVER to tasks/<name>.json, without endpoints.
-# TASKS = ALL (every task on the server) or task names separated by commas or new lines.
+# =============================================================================
+# qem_export.sh - export tasks from one Replicate server into tasks/
+#
+# Purpose : the export step of a routine change. Called by export-from-dev.yml.
+# Needs   : TASKS  ALL (every task on the server), or task names separated by
+#                  commas or new lines
+#           QEM_HOST, QEM_SERVER and the login variables (see qem_lib.sh)
+# Output  : one tasks/<name>.json per task, without endpoints and with sorted
+#           keys, so an unchanged task always produces the same text
+# Notes   : it commits nothing; the workflow decides what to commit.
+# =============================================================================
 set -euo pipefail
 source "$(dirname "$0")/qem_lib.sh"
 : "${TASKS:?Set TASKS to ALL or a list of task names}"

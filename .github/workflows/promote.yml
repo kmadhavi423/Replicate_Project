@@ -1,3 +1,19 @@
+# =============================================================================
+# Promote Replicate tasks   (step 2 of a routine change)
+#
+# Purpose : import the task files that changed since the last promotion into
+#           PROD, through QEM.
+# Start   : Actions > Promote Replicate tasks > Run workflow, on main only.
+#           Do a dry run first. Inputs: base, dry_run, only, stop_tasks, allow_new.
+# Jobs    : changes  compares main with the promoted-prod tag, applies the
+#                    only / allow_new rules and writes the file list to the
+#                    run summary
+#           prod     runs only when there is something to import and it is
+#                    not a dry run: stops and imports each task
+#                    (scripts/qem_import.sh), then moves the promoted-prod tag
+# Needs   : prod Environment (QEM_HOST, REPLICATE_SERVER, QEM_USER, QEM_PASSWORD).
+# =============================================================================
+
 name: Promote Replicate tasks
 
 # Manual only: someone clicks "Run workflow" to promote to PROD.
@@ -17,6 +33,10 @@ on:
         description: 'Import only these task names, comma-separated (empty = every changed task). A partial run does not move the promoted-prod tag.'
         required: false
         default: ''
+      stop_tasks:
+        description: 'Stop each task on PROD before importing it (tasks stay stopped; start them yourself)'
+        type: boolean
+        default: true
       allow_new:
         description: 'Allow tasks that are not in PROD yet (they will be CREATED in PROD)'
         type: boolean
@@ -26,6 +46,7 @@ permissions:
   contents: write
 
 jobs:
+  # Job 1: decide which task files to import.
   changes:
     if: github.ref == 'refs/heads/main'   # PROD is only promoted from main
     runs-on: [self-hosted, windows]
@@ -104,6 +125,7 @@ jobs:
             if [ -n "$FILES" ]; then echo 'any=true'; else echo 'any=false'; fi
           } >> "$GITHUB_OUTPUT"
 
+  # Job 2: stop and import them into PROD, then move the tag.
   prod:
     needs: changes
     if: github.ref == 'refs/heads/main' && needs.changes.outputs.any == 'true' && !inputs.dry_run
@@ -120,6 +142,7 @@ jobs:
           QEM_USER: ${{ secrets.QEM_USER }}
           QEM_PASSWORD: ${{ secrets.QEM_PASSWORD }}
           CHANGED_FILES: ${{ needs.changes.outputs.files }}
+          STOP_TASKS: ${{ inputs.stop_tasks }}
         run: ./scripts/qem_import.sh
       - name: Mark this commit as promoted
         if: inputs.only == ''   # a partial run leaves the other changes pending
