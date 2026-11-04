@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
-# Shared helpers for the QEM scripts. Source this file; do not run it.
-# Required env: QEM_HOST, QEM_SERVER, and either QEM_PAT or QEM_USER + QEM_PASSWORD.
+# =============================================================================
+# qem_lib.sh - shared helpers for the QEM scripts
+#
+# Purpose  : one place for everything that talks to Qlik Enterprise Manager (QEM).
+# Use      : other scripts load it with "source"; it is never run on its own.
+# Needs    : QEM_HOST    host name exactly as printed on QEM's certificate
+#            QEM_SERVER  Replicate server name as registered in QEM
+#            QEM_PAT, or QEM_USER + QEM_PASSWORD   the login (user@domain for AD)
+# Provides : jqx                  jq that strips the CRLF line endings Windows adds
+#            qem_login            signs in to QEM and sets SESSION
+#            qem_list_task_names  prints the task names on QEM_SERVER
+#            qem_stop_task        stops one task (StopTask)
+#            qem_import_file      imports one tasks/<name>.json (ImportTask)
+#            qem_export_task      exports one task without endpoints (ExportTask)
+# =============================================================================
 
 BASE="https://${QEM_HOST}/attunityenterprisemanager/api/v1"
 
@@ -28,6 +41,43 @@ qem_login() {
     exit 1
   fi
   echo "::add-mask::$SESSION"
+}
+
+# Prints the names of all tasks on QEM_SERVER, one per line.
+qem_list_task_names() {
+  local tmp=".qem_tasklist.tmp"
+  curl -sS -f --header "EnterpriseManager.APISessionID: ${SESSION}" \
+    "${BASE}/servers/${QEM_SERVER}/tasks" -o "$tmp"
+  jqx -r '.taskList[].name' "$tmp"
+  rm -f "$tmp"
+}
+
+# Stops one task on QEM_SERVER. $1 = task name. STOP_TIMEOUT (seconds, default 60).
+# Returns 0 when the task is stopped or was already stopped, 1 on any other failure.
+qem_stop_task() {
+  local task="$1" enc code resp
+  enc=$(jqx -rn --arg t "$task" '$t|@uri')
+  resp=".qem_stop_response.tmp"
+  echo "Stopping ${task} on ${QEM_SERVER}"
+  code=$(curl -sS -o "$resp" -w '%{http_code}' -X POST \
+    --header "EnterpriseManager.APISessionID: ${SESSION}" \
+    --header "Content-Length: 0" \
+    "${BASE}/servers/${QEM_SERVER}/tasks/${enc}?action=stop&timeout=${STOP_TIMEOUT:-60}")
+  if [ "$code" -ge 200 ] && [ "$code" -lt 300 ]; then
+    echo "  Stopped (HTTP ${code})"
+    rm -f "$resp"
+    return 0
+  fi
+  if grep -q "AEM_TASK_ALREADY_STOPPED" "$resp"; then
+    echo "  Already stopped"
+    rm -f "$resp"
+    return 0
+  fi
+  echo "  Could not stop (HTTP ${code}). QEM said:" >&2
+  tr -d '\r' < "$resp" >&2 || true
+  echo >&2
+  rm -f "$resp"
+  return 1
 }
 
 # Imports one task JSON file into QEM_SERVER. $1 = path to the file.

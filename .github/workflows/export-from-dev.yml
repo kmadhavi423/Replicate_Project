@@ -1,3 +1,17 @@
+# =============================================================================
+# Export tasks from DEV   (step 1 of a routine change)
+#
+# Purpose : copy the tasks you changed on DEV into Git, for review.
+# Start   : Actions > Export tasks from DEV > Run workflow, then type the task
+#           names separated by commas. Avoid ALL for routine changes.
+# Does    : 1. exports the tasks without endpoints (scripts/qem_export.sh)
+#           2. adds only the files that differ from Git to a new branch,
+#              export/dev-<run number>, and pushes it
+#           3. puts a link for opening the pull request in the run summary
+#           If nothing changed it says so and creates no branch.
+# Needs   : dev Environment (QEM_HOST, REPLICATE_SERVER, QEM_USER, QEM_PASSWORD).
+# =============================================================================
+
 name: Export tasks from DEV
 on:
   workflow_dispatch:
@@ -7,6 +21,7 @@ on:
         required: true
 
 jobs:
+  # One job: export the tasks, then commit what changed to a branch.
   export:
     runs-on: [self-hosted, windows]
     environment: dev

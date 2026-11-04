@@ -1,7 +1,21 @@
+# =============================================================================
+# Baseline from PROD   (run once, at the start)
+#
+# Purpose : make Git and DEV match PROD before the first promotion.
+# Start   : Actions > Baseline from PROD > Run workflow.
+# Jobs    : export-prod  exports every PROD task into tasks/, commits it to
+#                        main, and tags that commit promoted-prod
+#           import-dev   imports the same files into the DEV server
+# Needs   : prod Environment (PROD server) and dev Environment (DEV server).
+#           It pushes to main directly, so allow that if main is protected.
+#           DEV endpoints must exist and DEV tasks of the same names be stopped.
+# =============================================================================
+
 name: Baseline from PROD
 on: workflow_dispatch
 
 jobs:
+  # Job 1: read every task from PROD into Git and tag the starting point.
   export-prod:
     runs-on: [self-hosted, windows]
     environment: prod
@@ -38,6 +52,7 @@ jobs:
           git tag -f promoted-prod HEAD
           git push -f origin refs/tags/promoted-prod
 
+  # Job 2: import the same files into DEV.
   import-dev:
     needs: export-prod
     runs-on: [self-hosted, windows]

@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
-# export: read every task from QEM_SERVER (PROD) into tasks/*.json, without endpoints
-# import: import every tasks/*.json into QEM_SERVER (DEV)
+# =============================================================================
+# qem_baseline.sh - seed Git from PROD, and DEV from Git (run once at the start)
+#
+# Usage   : qem_baseline.sh export   read every task on QEM_SERVER (PROD) into
+#                                    tasks/*.json, without endpoints
+#           qem_baseline.sh import   import every tasks/*.json into QEM_SERVER (DEV)
+# Needs   : QEM_HOST, QEM_SERVER and the login variables (see qem_lib.sh)
+# Called  : by baseline.yml, first with "export" and then with "import".
+# Notes   : it does not stop tasks, so stop any same-named DEV task before
+#           the import.
+# =============================================================================
 set -euo pipefail
 source "$(dirname "$0")/qem_lib.sh"
 qem_login
