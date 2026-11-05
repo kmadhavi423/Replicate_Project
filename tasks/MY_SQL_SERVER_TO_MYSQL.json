@@ -9,6 +9,17 @@
   "cmd.replication_definition": {
     "tasks": [
       {
+        "error_behavior": {
+          "apply_error_behavior": {
+            "insert_policy": "ERROR_POLICY_MERGE_MODE",
+            "update_policy": "ERROR_POLICY_UPSERT_MODE"
+          },
+          "data_error_behavior": {
+            "nullability_check_data_error": "NO"
+          },
+          "recoverable_error_behavior": {},
+          "table_error_behavior": {}
+        },
         "source": {
           "rep_source": {
             "database_name": "SQL Server SRC GOVT",
@@ -134,6 +145,6 @@
       }
     ]
   },
-  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-05 23:29:44.824822",
-  "name": "MY_SQL_SERVER_TO_MYSQL__2026-11-05--23-29-44-824822"
+  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-05 23:33:28.160318",
+  "name": "MY_SQL_SERVER_TO_MYSQL__2026-11-05--23-33-28-160318"
 }
