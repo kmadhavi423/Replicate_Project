@@ -1,10 +1,10 @@
 {
   "_version": {
     "fips": 0,
-    "version": "2026.5.0.108",
+    "version": "2026.5.0.423",
     "version_major": 2026,
     "version_minor": 5,
-    "version_revision": 108
+    "version_revision": 423
   },
   "cmd.replication_definition": {
     "tasks": [
@@ -121,7 +121,7 @@
             "statistics_table_settings": {},
             "status_table_settings": {},
             "suspended_tables_table_settings": {},
-            "task_uuid": "d1dd98e6-428c-4842-80ec-cb0a82bbe9f5"
+            "task_uuid": "5aa0a2cc-886c-ed42-a702-2f7fbc51158d"
           },
           "sorter_settings": {
             "local_transactions_storage": {}
@@ -140,6 +140,6 @@
       }
     ]
   },
-  "description": "Host name: USREM-FPG, Time: 2026-11-02 08:54:29.618215",
-  "name": "MY_ORACLE_TO_KAFKA__2026-11-02--08-54-29-618215"
+  "description": "Host name: MADKA-REPL.attunitydemo.com, Time: 2026-11-05 00:45:28.614983",
+  "name": "MY_ORACLE_TO_KAFKA__2026-11-05--00-45-28-614983"
 }
